@@ -8,14 +8,14 @@ import play.api.libs.json.Json
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-object Client {
+object ClientAkka {
 
   def main(args: Array[String]): Unit = {
     val _ = ActorSystem(spawnMultiple(), Configs.actorSystemName, Configs.clients)
   }
 
   private[this] def spawnMultiple(): Behavior[NotUsed] = Behaviors.setup { ctx =>
-    for (_ <- 1 to 1000)
+    for (_ <- 1 to Configs.instances)
       ctx.spawnAnonymous(mainBehavior())
     Behaviors.ignore
   }
@@ -37,7 +37,7 @@ object Client {
   }
 
   private[this] def scheduleTick(ctx: ActorContext[ClientCommand]) = {
-    ctx.scheduleOnce(10.millis, ctx.self, Tick)
+    ctx.scheduleOnce(Configs.awaitTime.millis, ctx.self, Tick)
   }
 
   private[this] sealed trait ClientCommand

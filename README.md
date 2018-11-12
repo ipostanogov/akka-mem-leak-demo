@@ -1,4 +1,5 @@
-### Akka memory leak demo (question)
+### Akka memory usage demo (question)
 
-* Run `demo.Client`
+* Run `demo.ClientAkka`
+* Run `demo.ClientThreads`
 * Watch RAM usage
