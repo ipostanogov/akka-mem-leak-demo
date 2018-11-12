@@ -1,10 +1,13 @@
-name := "akka-mem-leak-demo"
+name := "akka-mem-usage-demo"
 
 version := "1.0-SNAPSHOT"
 
 scalaVersion := "2.12.7"
 
-libraryDependencies += "com.typesafe.akka" %% "akka-cluster-typed" % "2.5.18"
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-cluster-typed" % "2.5.18",
+  "com.typesafe.play" %% "play-json" % "2.6.10",
+)
 
 scalacOptions ++= Seq(
   "-encoding", "utf8",
