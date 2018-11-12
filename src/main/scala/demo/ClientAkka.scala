@@ -1,12 +1,13 @@
 package demo
 
+import java.util.concurrent.ThreadLocalRandom
+
 import akka.NotUsed
 import akka.actor.typed.scaladsl.{ActorContext, Behaviors}
 import akka.actor.typed.{ActorSystem, Behavior}
 import play.api.libs.json.Json
 
 import scala.concurrent.duration._
-import scala.concurrent.{ExecutionContextExecutor, Future}
 
 object ClientAkka {
 
@@ -21,15 +22,13 @@ object ClientAkka {
   }
 
   private[this] def mainBehavior(): Behavior[ClientCommand] = Behaviors.setup { ctx =>
-    scheduleTick(ctx)
+    ctx.scheduleOnce(ThreadLocalRandom.current().nextLong(Configs.awaitTime).millis, ctx.self, Tick)
     Behaviors.receiveMessage {
       case Tick =>
-        implicit val ec: ExecutionContextExecutor = ctx.system.executionContext
-        Future {
-          Json.parse(
-            """{"name":"Watership Down","location":{"lat":51.235685,"long":-1.309197},
-              |"residents":[{"name":"Fiver","age":4,"role":null},{"name":"Bigwig","age":6,"role":"Owsla"}]}""".stripMargin)
-        } onComplete { _ => scheduleTick(ctx) }
+        Json.parse(
+          """{"name":"Watership Down","location":{"lat":51.235685,"long":-1.309197},
+            |"residents":[{"name":"Fiver","age":4,"role":null},{"name":"Bigwig","age":6,"role":"Owsla"}]}""".stripMargin)
+        scheduleTick(ctx)
         Behaviors.same
       case _ =>
         Behaviors.same
